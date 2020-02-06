@@ -19,11 +19,11 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         // mapView.delegate = self as? MKMapViewDelegate
         checkLocationServices()
     }
     
+    // function for setting up location manager
     func setupLocationManager () {
         // setting up location manager delegate
         locationManager.delegate = self
@@ -40,6 +40,7 @@ class ViewController: UIViewController {
         }
     }
     
+    // function for checking location services
     func checkLocationServices () {
         if CLLocationManager.locationServicesEnabled() {
             // Setup location manager
