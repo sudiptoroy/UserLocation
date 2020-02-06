@@ -13,25 +13,64 @@ import CoreLocation
 class ViewController: UIViewController {
 
     @IBOutlet weak var mapView: MKMapView!
+    let regionInMeters: Double = 10000
     
-    let locationManger = CLLocationManager()
+    let locationManager = CLLocationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         // mapView.delegate = self as? MKMapViewDelegate
+        checkLocationServices()
     }
     
     func setupLocationManager () {
         // setting up location manager delegate
-        locationManger.delegate = self
+        locationManager.delegate = self
+        
+        // Location Accuracy
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+    }
+    
+    // function to user's location in zoomed in view
+    func centerViewOnUserLocation() {
+        if let location = locationManager.location?.coordinate {
+            let region = MKCoordinateRegion.init(center: location, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
+            mapView.setRegion(region, animated: true)
+        }
     }
     
     func checkLocationServices () {
         if CLLocationManager.locationServicesEnabled() {
             // Setup location manager
+            setupLocationManager()
+            // Check Location Authorization
+            checkLocationAuthorization()
         } else {
             // Show alert to letting the user know they have to turn on the location
+        }
+    }
+    
+    // funtion for checking location authorization
+    func checkLocationAuthorization () {
+        switch CLLocationManager.authorizationStatus() {
+        case .authorizedWhenInUse:
+            // Map related code
+            mapView.showsUserLocation = true
+            centerViewOnUserLocation()
+            break
+        case .notDetermined:
+            // request location authorization when in use
+            locationManager.requestWhenInUseAuthorization()
+            break
+        case .restricted:
+            // show an alert letting them know what's up
+            break
+        case .denied:
+            // Show the user how to turn on the location
+            break
+        case .authorizedAlways:
+            break
         }
     }
 
