@@ -58,6 +58,7 @@ class ViewController: UIViewController {
             // Map related code
             mapView.showsUserLocation = true
             centerViewOnUserLocation()
+            locationManager.startUpdatingLocation()
             break
         case .notDetermined:
             // request location authorization when in use
@@ -78,12 +79,16 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: CLLocationManagerDelegate {
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        // Some code
+        guard let location = locations.last else { return }
+        let region = MKCoordinateRegion.init(center: location.coordinate, latitudinalMeters: regionInMeters, longitudinalMeters: regionInMeters)
+        mapView.setRegion(region, animated: true)
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        // Some code
+        // Check if the user changed the location authorization
+        checkLocationAuthorization()
     }
 }
 
